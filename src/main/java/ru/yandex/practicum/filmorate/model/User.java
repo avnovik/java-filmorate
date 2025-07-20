@@ -13,8 +13,8 @@ public class User {
     @Email(message = "Email должен содержать символ @")
     private String email;
 
-    @NotBlank(message = "Логин не может быть пустым")
     @Pattern(regexp = "\\S+", message = "Логин не должен содержать пробелы")
+    @NotBlank(message = "Логин не может быть пустым")
     private String login;
 
     private String name;
