@@ -52,4 +52,26 @@ public class UserControllerTest {
         );
         assertEquals("Пользователь с id=999 не найден", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("При обновлении подставляет login, если name пустое")
+    void shouldSetLoginAsNameIfNameIsEmptyDuringUpdate() {
+        User existingUser = new User();
+        existingUser.setId(1L);
+        existingUser.setEmail("old@mail.ru");
+        existingUser.setLogin("old_login");
+        existingUser.setName("Old Name");
+        existingUser.setBirthday(LocalDate.of(2000, 1, 1));
+        controller.addUser(existingUser);
+
+        User updatedUser = new User();
+        updatedUser.setId(1L);
+        updatedUser.setEmail("new@mail.ru");
+        updatedUser.setLogin("new_login");
+        updatedUser.setName(" "); // Пустое имя
+        updatedUser.setBirthday(LocalDate.of(2000, 1, 1));
+
+        User result = controller.updateUser(updatedUser);
+        assertEquals("new_login", result.getName());
+    }
 }

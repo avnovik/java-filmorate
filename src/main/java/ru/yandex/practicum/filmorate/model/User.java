@@ -19,6 +19,7 @@ public class User {
 
     private String name;
 
+//    @NotNull
 //    @PastOrPresent(message = "Дата рождения не может быть в будущем") //не работает, уточнить
     private LocalDate birthday;
 }
