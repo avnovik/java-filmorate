@@ -27,17 +27,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Отклоняет дату рождения в будущем")
-    void shouldThrowExceptionIfBirthdayInFuture() {
-        User user = new User();
-        user.setEmail("test@mail.ru");
-        user.setLogin("login");
-        user.setBirthday(LocalDate.now().plusDays(1)); // Завтрашняя дата
-
-        assertThrows(ValidationException.class, () -> controller.addUser(user));
-    }
-
-    @Test
     @DisplayName("Отклоняет обновление несуществующего пользователя")
     void shouldThrowExceptionIfUserNotFound() {
         User user = new User();

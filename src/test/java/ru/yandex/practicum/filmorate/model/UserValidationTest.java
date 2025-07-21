@@ -86,4 +86,17 @@ public class UserValidationTest extends BaseTest {
         var violations = validator.validate(user);
         assertTrue(violations.isEmpty());
     }
+
+    @Test
+    @DisplayName("Отклоняет дату рождения в будущем (проверка аннотации @PastOrPresent)")
+    void shouldThrowExceptionIfBirthdayInFuture() {
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin("login");
+        user.setBirthday(LocalDate.now().plusDays(1)); // Завтрашняя дата
+
+        var violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertEquals("Дата рождения не может быть в будущем", violations.iterator().next().getMessage());
+    }
 }
