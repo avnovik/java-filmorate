@@ -27,19 +27,17 @@ public class UserControllerTest {
         userService = new UserService(userStorage);
         controller = new UserController(userStorage, userService);
 
-        testUser = User.builder()
-                .email("test@mail.ru")
-                .login("testLogin")
-                .name("Test User")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        testUser = new User();
+        testUser.setEmail("test@mail.ru");
+        testUser.setLogin("testLogin");
+        testUser.setName("Test User");
+        testUser.setBirthday(LocalDate.of(2000, 1, 1));
 
-        friendUser = User.builder()
-                .email("friend@mail.ru")
-                .login("friendLogin")
-                .name("Friend User")
-                .birthday(LocalDate.of(2001, 2, 2))
-                .build();
+        friendUser = new User();
+        friendUser.setEmail("friend@mail.ru");
+        friendUser.setLogin("friendLogin");
+        friendUser.setName("Friend User");
+        friendUser.setBirthday(LocalDate.of(2001, 2, 2));
     }
 
     @Test
@@ -77,13 +75,12 @@ public class UserControllerTest {
     void shouldSetLoginAsNameIfNameIsEmptyDuringUpdate() {
         User existingUser = controller.addUser(testUser);
 
-        User updatedUser = User.builder()
-                .id(existingUser.getId())
-                .email("new@mail.ru")
-                .login("new_login")
-                .name(" ")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User updatedUser = new User();
+        updatedUser.setId(existingUser.getId());
+        updatedUser.setEmail("new@mail.ru");
+        updatedUser.setLogin("new_login");
+        updatedUser.setName(" ");
+        updatedUser.setBirthday(LocalDate.of(2000, 1, 1));
 
         User result = controller.updateUser(updatedUser);
         assertEquals("new_login", result.getName());
@@ -139,10 +136,9 @@ public class UserControllerTest {
     void shouldReturnCommonFriends() {
         controller.addUser(testUser);
         controller.addUser(friendUser);
-        User commonFriend = User.builder()
-                .email("common@mail.ru")
-                .login("commonLogin")
-                .build();
+        User commonFriend = new User();
+        commonFriend.setEmail("common@mail.ru");
+        commonFriend.setLogin("commonLogin");
         commonFriend = controller.addUser(commonFriend);
 
         controller.addFriend(testUser.getId(), commonFriend.getId());

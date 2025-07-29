@@ -14,13 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserValidationTest extends BaseTest {
 
     @Test
-    @DisplayName("Не пропускает email без символа @  (проверка аннотации @Email)")
+    @DisplayName("Не пропускает email без символа @ (проверка аннотации @Email)")
     void shouldFailValidationIfEmailInvalid() {
-        User user = User.builder()
-                .email("invalid-email") // Нет @
-                .login("validLogin")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("invalid-email"); // Нет @
+        user.setLogin("validLogin");
+        user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
@@ -30,11 +29,10 @@ public class UserValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает логин с пробелами (проверка аннотации @Pattern)")
     void shouldFailValidationIfLoginHasSpaces() {
-        User user = User.builder()
-                .email("test@mail.ru")
-                .login("invalid login") // Пробел
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin("invalid login"); // Пробел
+        user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
@@ -44,11 +42,10 @@ public class UserValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает пустой login (проверка аннотации @NotBlank)")
     void shouldFailValidationIfLoginIsBlank() {
-        User user = User.builder()
-                .email("test@mail.ru")
-                .login("")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin("");
+        user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
@@ -61,11 +58,10 @@ public class UserValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает null-значение для login (проверка аннотации @NotBlank)")
     void shouldFailValidationIfLoginIsNull() {
-        User user = User.builder()
-                .email("test@mail.ru")
-                .login(null) // Явный null
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin(null); // Явный null
+        user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
@@ -75,12 +71,12 @@ public class UserValidationTest extends BaseTest {
     @Test
     @DisplayName("Принимает пустое имя (подставится login)")
     void shouldAcceptEmptyName() {
-        User user = User.builder()
-                .email("test@mail.ru")
-                .login("validLogin")
-                .name("") // Пустое имя
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin("validLogin");
+        user.setName(""); // Пустое имя
+        user.setBirthday(LocalDate.of(2000, 1, 1));
+
 
         var violations = validator.validate(user);
         assertTrue(violations.isEmpty()); // Нет ошибок
@@ -89,11 +85,10 @@ public class UserValidationTest extends BaseTest {
     @Test
     @DisplayName("Принимает валидные email и login")
     void shouldAcceptValidEmailAndLogin() {
-        User user = User.builder()
-                .email("test@mail.ru")
-                .login("validLogin")
-                .birthday(LocalDate.of(2000, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin("validLogin");
+        user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
         assertTrue(violations.isEmpty());
@@ -102,11 +97,10 @@ public class UserValidationTest extends BaseTest {
     @Test
     @DisplayName("Отклоняет дату рождения в будущем (проверка аннотации @PastOrPresent)")
     void shouldThrowExceptionIfBirthdayInFuture() {
-        User user = User.builder()
-                .email("test@mail.ru")
-                .login("login")
-                .birthday(LocalDate.now().plusDays(1)) // Завтрашняя дата
-                .build();
+        User user = new User();
+        user.setEmail("test@mail.ru");
+        user.setLogin("login");
+        user.setBirthday(LocalDate.now().plusDays(1)); // Завтрашняя дата
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());

@@ -39,12 +39,11 @@ public class FilmControllerTest {
     @Test
     @DisplayName("Принимает дату релиза ровно 28 декабря 1895 года")
     void shouldAcceptReleaseDateExactly1895() {
-        Film film = Film.builder()
-                .name("Valid name")
-                .description("Valid description")
-                .releaseDate(LocalDate.of(1895, 12, 28))
-                .duration(120)
-                .build();
+        Film film = new Film();
+        film.setName("Valid name");
+        film.setDescription("Valid description");
+        film.setReleaseDate(LocalDate.of(1895, 12, 28));
+        film.setDuration(120);
 
         assertDoesNotThrow(() -> filmController.addFilm(film));
     }
@@ -52,12 +51,11 @@ public class FilmControllerTest {
     @Test
     @DisplayName("Отклоняет дату релиза раньше 28 декабря 1895 года")
     void shouldThrowExceptionIfReleaseDateBefore1895() {
-        Film film = Film.builder()
-                .name("Valid name")
-                .description("Valid description")
-                .releaseDate(LocalDate.of(1890, 1, 1))
-                .duration(120)
-                .build();
+        Film film = new Film();
+        film.setName("Valid name");
+        film.setDescription("Valid description");
+        film.setReleaseDate(LocalDate.of(1890, 1, 1));
+        film.setDuration(120);
 
         assertThrows(ValidationException.class, () -> filmController.addFilm(film));
     }
@@ -65,13 +63,12 @@ public class FilmControllerTest {
     @Test
     @DisplayName("При обновлении выбрасывает исключение, если фильм с id не существует")
     void shouldThrowExceptionIfFilmNotFound() {
-        Film film = Film.builder()
-                .id(999L)
-                .name("Valid name")
-                .description("Valid description")
-                .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(120)
-                .build();
+        Film film = new Film();
+        film.setId(999L);
+        film.setName("Valid name");
+        film.setDescription("Valid description");
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setDuration(120);
 
         NotFoundException exception = assertThrows(
                 NotFoundException.class,
@@ -84,20 +81,18 @@ public class FilmControllerTest {
     @Test
     @DisplayName("PUT /{id}/like/{userId} добавляет лайк фильму")
     void shouldAddLikeToFilm() {
-        User user = User.builder()
-                .email("test@ya.ru")
-                .login("testLogin")
-                .name("Test User")
-                .birthday(LocalDate.of(1990, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@ya.ru");
+        user.setLogin("testLogin");
+        user.setName("Test User");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
         User createdUser = userController.addUser(user);
 
-        Film film = Film.builder()
-                .name("Test Film")
-                .description("Test Description")
-                .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(120)
-                .build();
+        Film film = new Film();
+        film.setName("Test Film");
+        film.setDescription("Test Description");
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setDuration(120);
         Film createdFilm = filmController.addFilm(film);
 
         filmController.addLike(createdFilm.getId(), createdUser.getId());
@@ -110,20 +105,18 @@ public class FilmControllerTest {
     @Test
     @DisplayName("DELETE /{id}/like/{userId} удаляет лайк у фильма")
     void shouldRemoveLikeFromFilm() {
-        User user = User.builder()
-                .email("test@ya.ru")
-                .login("testLogin")
-                .name("Test User")
-                .birthday(LocalDate.of(1990, 1, 1))
-                .build();
+        User user = new User();
+        user.setEmail("test@ya.ru");
+        user.setLogin("testLogin");
+        user.setName("Test User");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
         User createdUser = userController.addUser(user);
 
-        Film film = Film.builder()
-                .name("Test Film")
-                .description("Test Description")
-                .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(120)
-                .build();
+        Film film = new Film();
+        film.setName("Test Film");
+        film.setDescription("Test Description");
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setDuration(120);
         Film createdFilm = filmController.addFilm(film);
 
         filmController.addLike(createdFilm.getId(), createdUser.getId());
@@ -136,20 +129,18 @@ public class FilmControllerTest {
     @Test
     @DisplayName("GET /popular возвращает список популярных фильмов")
     void shouldGetPopularFilms() {
-        Film film1 = Film.builder()
-                .name("Test 1")
-                .description("Test Description 1")
-                .releaseDate(LocalDate.of(2000, 1, 11))
-                .duration(120)
-                .build();
+        Film film1 = new Film();
+        film1.setName("Test 1");
+        film1.setDescription("Test Description 1");
+        film1.setReleaseDate(LocalDate.of(2000, 1, 11));
+        film1.setDuration(120);
         filmController.addFilm(film1);
 
-        Film film2 = Film.builder()
-                .name("Test 2")
-                .description("Test Description 2")
-                .releaseDate(LocalDate.of(2000, 11, 1))
-                .duration(120)
-                .build();
+        Film film2 = new Film();
+        film2.setName("Test 2");
+        film2.setDescription("Test Description 2");
+        film2.setReleaseDate(LocalDate.of(2000, 11, 1));
+        film2.setDuration(120);
         filmController.addFilm(film2);
 
         List<Film> popularFilms = filmController.getPopular(10);
@@ -160,12 +151,11 @@ public class FilmControllerTest {
     @DisplayName("GET /popular с параметром count возвращает указанное количество фильмов")
     void shouldGetPopularFilmsWithCountParameter() {
         for (int i = 1; i <= 5; i++) {
-            Film film = Film.builder()
-                    .name("Test Film" + i)
-                    .description("Test Description" + i)
-                    .releaseDate(LocalDate.of(2000 + i, 1 + i, 1))
-                    .duration(120)
-                    .build();
+            Film film = new Film();
+            film.setName("Test Film" + i);
+            film.setDescription("Test Description" + i);
+            film.setReleaseDate(LocalDate.of(2000 + i, 1 + i, 1));
+            film.setDuration(120);
             filmController.addFilm(film);
         }
 
@@ -178,23 +168,21 @@ public class FilmControllerTest {
     void shouldReturnTop5PopularFilms() {
 
         for (int i = 1; i <= 7; i++) {
-            User user = User.builder()
-                    .email("user" + i + "@test.com")
-                    .login("user" + i)
-                    .name(faker.name().fullName())
-                    .birthday(LocalDate.now().minusYears(33 + i))
-                    .build();
+            User user = new User();
+            user.setEmail("user" + i + "@test.com");
+            user.setLogin("user" + i);
+            user.setName(faker.name().fullName());
+            user.setBirthday(LocalDate.now().minusYears(33 + i));
             userController.addUser(user);
         }
 
         List<Film> films = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            Film film = Film.builder()
-                    .name(faker.funnyName().name())
-                    .description(faker.lorem().sentence())
-                    .releaseDate(LocalDate.of(2000 + i, 1 + i, 1))
-                    .duration(faker.number().numberBetween(60, 180))
-                    .build();
+            Film film = new Film();
+            film.setName(faker.funnyName().name());
+            film.setDescription(faker.lorem().sentence());
+            film.setReleaseDate(LocalDate.of(2000 + i, 1 + i, 1));
+            film.setDuration(faker.number().numberBetween(60, 180));
             filmController.addFilm(film);
             films.add(film);
         }
