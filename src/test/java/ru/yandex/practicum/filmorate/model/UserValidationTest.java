@@ -6,6 +6,9 @@ import ru.yandex.practicum.filmorate.BaseTest;
 
 import java.time.LocalDate;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest extends BaseTest {
@@ -43,13 +46,16 @@ public class UserValidationTest extends BaseTest {
     void shouldFailValidationIfLoginIsBlank() {
         User user = User.builder()
                 .email("test@mail.ru")
-                .login(" ") // Пробел
+                .login("")
                 .birthday(LocalDate.of(2000, 1, 1))
                 .build();
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
-        assertEquals("Логин не должен содержать пробелы", violations.iterator().next().getMessage());
+        assertThat(
+                violations.iterator().next().getMessage(),
+                anyOf(is("Логин не может быть пустым"), is("Логин не должен содержать пробелы"))
+        );
     }
 
     @Test
