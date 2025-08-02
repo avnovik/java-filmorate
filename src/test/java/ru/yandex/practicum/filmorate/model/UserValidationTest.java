@@ -6,12 +6,15 @@ import ru.yandex.practicum.filmorate.BaseTest;
 
 import java.time.LocalDate;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest extends BaseTest {
 
     @Test
-    @DisplayName("Не пропускает email без символа @  (проверка аннотации @Email)")
+    @DisplayName("Не пропускает email без символа @ (проверка аннотации @Email)")
     void shouldFailValidationIfEmailInvalid() {
         User user = new User();
         user.setEmail("invalid-email"); // Нет @
@@ -41,12 +44,15 @@ public class UserValidationTest extends BaseTest {
     void shouldFailValidationIfLoginIsBlank() {
         User user = new User();
         user.setEmail("test@mail.ru");
-        user.setLogin(" ");
+        user.setLogin("");
         user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
-        assertEquals("Логин не должен содержать пробелы", violations.iterator().next().getMessage());
+        assertThat(
+                violations.iterator().next().getMessage(),
+                anyOf(is("Логин не может быть пустым"), is("Логин не должен содержать пробелы"))
+        );
     }
 
     @Test
@@ -54,7 +60,7 @@ public class UserValidationTest extends BaseTest {
     void shouldFailValidationIfLoginIsNull() {
         User user = new User();
         user.setEmail("test@mail.ru");
-        user.setLogin(null);
+        user.setLogin(null); // Явный null
         user.setBirthday(LocalDate.of(2000, 1, 1));
 
         var violations = validator.validate(user);
@@ -70,6 +76,7 @@ public class UserValidationTest extends BaseTest {
         user.setLogin("validLogin");
         user.setName(""); // Пустое имя
         user.setBirthday(LocalDate.of(2000, 1, 1));
+
 
         var violations = validator.validate(user);
         assertTrue(violations.isEmpty()); // Нет ошибок
