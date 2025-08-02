@@ -7,10 +7,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Сервис для обработки операций с друзьями пользователей.
@@ -24,6 +21,31 @@ public class UserService {
     @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
+    }
+
+    public User addUser(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.info("Для пользователя {} установлен login как имя", user.getEmail());
+        }
+        return userStorage.addUser(user);
+    }
+
+    public User updateUser(User user) {
+        getUserByIdOrThrow(user.getId());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.info("Для пользователя {} установлен login как имя", user.getEmail());
+        }
+        return userStorage.updateUser(user);
+    }
+
+    public Collection<User> getAllUsers() {
+        return userStorage.getAllUsers();
+    }
+
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
     }
 
     public void addFriend(Long userId, Long friendId) {

@@ -25,7 +25,7 @@ public class UserControllerTest {
     void setUp() {
         userStorage = new InMemoryUserStorage();
         userService = new UserService(userStorage);
-        controller = new UserController(userStorage, userService);
+        controller = new UserController(userService);
 
         testUser = new User();
         testUser.setEmail("test@mail.ru");
