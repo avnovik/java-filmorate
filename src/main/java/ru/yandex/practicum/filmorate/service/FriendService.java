@@ -22,7 +22,6 @@ public class FriendService {
 
     public void addFriend(Long userId, Long friendId) {
         log.info("Попытка добавления друзья: пользователь {} добавляет {}", userId, friendId);
-        validationService.validateUserExists(friendId);
         validationService.validateUsersExist(userId, friendId);
         if (userId.equals(friendId)) {
             throw new ValidationException("Пользователь не может добавить себя в друзья.");
