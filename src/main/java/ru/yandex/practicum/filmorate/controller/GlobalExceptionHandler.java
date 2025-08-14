@@ -27,8 +27,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleValidationExceptions(final MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getAllErrors().stream()
                 .map(error -> {
-                    if (error instanceof FieldError) {
-                        FieldError fieldError = (FieldError) error;
+                    if (error instanceof FieldError fieldError) {
                         return fieldError.getField() + ": " + fieldError.getDefaultMessage();
                     }
                     return error.getDefaultMessage();
