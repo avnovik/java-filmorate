@@ -14,11 +14,13 @@ public class FilmValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает пустое название фильма (проверка аннотации @NotBlank)")
     void shouldFailValidationIfNameIsBlank() {
-        Film film = new Film();
-        film.setName(" "); // Пробел не считается за валидное значение
-        film.setDescription("Valid description");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(120);
+        Film film = Film.builder()
+                .name(" ") // Пробел не считается за валидное значение
+                .description("Valid description")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(120)
+                .mpa(new MpaRating(1L, "G", "G Film"))
+                .build();
 
         var violations = validator.validate(film);
         assertFalse(violations.isEmpty());
@@ -28,11 +30,13 @@ public class FilmValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает описание длиннее 200 символов (проверка аннотации @Size)")
     void shouldFailValidationIfDescriptionTooLong() {
-        Film film = new Film();
-        film.setName("Valid name");
-        film.setDescription("A".repeat(201)); // 201 символ
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(120);
+        Film film = Film.builder()
+                .name("Valid name")
+                .description("A".repeat(201)) // 201 символ
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(120)
+                .mpa(new MpaRating(1L, "G", "G Film"))
+                .build();
 
         var violations = validator.validate(film);
         assertFalse(violations.isEmpty());
@@ -42,11 +46,13 @@ public class FilmValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает отрицательную продолжительность фильма (проверка аннотации @Positive)")
     void shouldFailValidationIfDurationNegative() {
-        Film film = new Film();
-        film.setName("Valid name");
-        film.setDescription("Valid description");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(-1);
+        Film film = Film.builder()
+                .name("Valid name")
+                .description("Valid description")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(-1)
+                .mpa(new MpaRating(1L, "G", "G Film"))
+                .build();
 
         var violations = validator.validate(film);
         assertFalse(violations.isEmpty());
@@ -56,11 +62,13 @@ public class FilmValidationTest extends BaseTest {
     @Test
     @DisplayName("Не пропускает null для даты релиза (проверка аннотации @NotNull)")
     void shouldFailValidationIfReleaseDateIsNull() {
-        Film film = new Film();
-        film.setName("Valid name");
-        film.setDescription("Valid description");
-        film.setReleaseDate(null);
-        film.setDuration(120);
+        Film film = Film.builder()
+                .name("Valid name")
+                .description("Valid description")
+                .releaseDate(null)
+                .duration(120)
+                .mpa(new MpaRating(1L, "G", "G Film"))
+                .build();
 
         var violations = validator.validate(film);
         assertFalse(violations.isEmpty());

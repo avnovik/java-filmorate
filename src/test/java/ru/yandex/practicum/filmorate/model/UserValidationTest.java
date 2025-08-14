@@ -6,9 +6,6 @@ import ru.yandex.practicum.filmorate.BaseTest;
 
 import java.time.LocalDate;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest extends BaseTest {
@@ -27,7 +24,7 @@ public class UserValidationTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Не пропускает логин с пробелами (проверка аннотации @Pattern)")
+    @DisplayName("Не пропускает логин с пробелами (проверка аннотации @ValidLogin)")
     void shouldFailValidationIfLoginHasSpaces() {
         User user = new User();
         user.setEmail("test@mail.ru");
@@ -36,11 +33,11 @@ public class UserValidationTest extends BaseTest {
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
-        assertEquals("Логин не должен содержать пробелы", violations.iterator().next().getMessage());
+        assertEquals("Логин должен содержать только буквы и цифры и не может содержать пробелов.", violations.iterator().next().getMessage());
     }
 
     @Test
-    @DisplayName("Не пропускает пустой login (проверка аннотации @NotBlank)")
+    @DisplayName("Не пропускает пустой login (проверка аннотации @ValidLogin)")
     void shouldFailValidationIfLoginIsBlank() {
         User user = new User();
         user.setEmail("test@mail.ru");
@@ -49,14 +46,11 @@ public class UserValidationTest extends BaseTest {
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
-        assertThat(
-                violations.iterator().next().getMessage(),
-                anyOf(is("Логин не может быть пустым"), is("Логин не должен содержать пробелы"))
-        );
+        assertEquals("Логин должен содержать только буквы и цифры и не может содержать пробелов.", violations.iterator().next().getMessage());
     }
 
     @Test
-    @DisplayName("Не пропускает null-значение для login (проверка аннотации @NotBlank)")
+    @DisplayName("Не пропускает null-значение для login (проверка аннотации @ValidLogin)")
     void shouldFailValidationIfLoginIsNull() {
         User user = new User();
         user.setEmail("test@mail.ru");
@@ -65,7 +59,7 @@ public class UserValidationTest extends BaseTest {
 
         var violations = validator.validate(user);
         assertFalse(violations.isEmpty());
-        assertEquals("Логин не может быть пустым", violations.iterator().next().getMessage());
+        assertEquals("Логин должен содержать только буквы и цифры и не может содержать пробелов.", violations.iterator().next().getMessage());
     }
 
     @Test

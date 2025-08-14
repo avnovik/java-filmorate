@@ -3,10 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.BaseIntegrationTest;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -14,36 +13,31 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserControllerTest {
-    private InMemoryUserStorage userStorage;
-    private UserService userService;
-    private UserController controller;
+public class UserControllerTest extends BaseIntegrationTest {
     private User testUser;
     private User friendUser;
 
     @BeforeEach
     void setUp() {
-        userStorage = new InMemoryUserStorage();
-        userService = new UserService(userStorage);
-        controller = new UserController(userService);
+        testUser = User.builder()
+                .email("test@mail.ru")
+                .login("testLogin")
+                .name("Test User")
+                .birthday(LocalDate.of(2000, 1, 1))
+                .build();
 
-        testUser = new User();
-        testUser.setEmail("test@mail.ru");
-        testUser.setLogin("testLogin");
-        testUser.setName("Test User");
-        testUser.setBirthday(LocalDate.of(2000, 1, 1));
-
-        friendUser = new User();
-        friendUser.setEmail("friend@mail.ru");
-        friendUser.setLogin("friendLogin");
-        friendUser.setName("Friend User");
-        friendUser.setBirthday(LocalDate.of(2001, 2, 2));
+        friendUser = User.builder()
+                .email("friend@mail.ru")
+                .login("friendLogin")
+                .name("Friend User")
+                .birthday(LocalDate.of(2001, 2, 2))
+                .build();
     }
 
     @Test
     @DisplayName("Добавляет пользователя с валидными данными")
     void shouldAddUserWithValidData() {
-        User addedUser = controller.addUser(testUser);
+        User addedUser = userController.createUser(testUser);
 
         assertNotNull(addedUser.getId());
         assertEquals(testUser.getEmail(), addedUser.getEmail());
@@ -54,7 +48,7 @@ public class UserControllerTest {
     void shouldSetLoginAsNameIfNameIsEmpty() {
         testUser.setName("");
 
-        User savedUser = controller.addUser(testUser);
+        User savedUser = userController.createUser(testUser);
         assertEquals(testUser.getLogin(), savedUser.getName());
     }
 
@@ -65,15 +59,15 @@ public class UserControllerTest {
 
         NotFoundException exception = assertThrows(
                 NotFoundException.class,
-                () -> controller.updateUser(testUser)
+                () -> userController.updateUser(testUser)
         );
-        assertEquals("Пользователь с id=999 не найден", exception.getMessage());
+        assertEquals("Пользователь с ID 999 не найден", exception.getMessage());
     }
 
     @Test
     @DisplayName("При обновлении подставляет login, если name пустое")
     void shouldSetLoginAsNameIfNameIsEmptyDuringUpdate() {
-        User existingUser = controller.addUser(testUser);
+        User existingUser = userController.createUser(testUser);
 
         User updatedUser = new User();
         updatedUser.setId(existingUser.getId());
@@ -82,27 +76,27 @@ public class UserControllerTest {
         updatedUser.setName(" ");
         updatedUser.setBirthday(LocalDate.of(2000, 1, 1));
 
-        User result = controller.updateUser(updatedUser);
+        User result = userController.updateUser(updatedUser);
         assertEquals("new_login", result.getName());
     }
 
     @Test
     @DisplayName("Возвращает всех добавленных пользователей")
     void shouldReturnAllAddedUsers() {
-        controller.addUser(testUser);
+        userController.createUser(testUser);
 
-        Collection<User> users = controller.getAllUsers();
+        Collection<User> users = userController.findAllUsers();
         assertEquals(1, users.size());
     }
 
     @Test
     @DisplayName("Добавляет пользователя в друзья")
     void shouldAddFriend() {
-        controller.addUser(testUser);
-        controller.addUser(friendUser);
-        controller.addFriend(testUser.getId(), friendUser.getId());
+        userController.createUser(testUser);
+        userController.createUser(friendUser);
+        userController.addFriend(testUser.getId(), friendUser.getId());
 
-        List<User> friends = controller.getFriends(testUser.getId());
+        List<User> friends = (List) userController.getFriends(testUser.getId());
         assertEquals(1, friends.size());
         assertEquals(friendUser.getId(), friends.get(0).getId());
     }
@@ -110,23 +104,23 @@ public class UserControllerTest {
     @Test
     @DisplayName("Удаляет пользователя из друзей")
     void shouldRemoveFriend() {
-        controller.addUser(testUser);
-        controller.addUser(friendUser);
-        controller.addFriend(testUser.getId(), friendUser.getId());
-        controller.removeFriend(testUser.getId(), friendUser.getId());
+        userController.createUser(testUser);
+        userController.createUser(friendUser);
+        userController.addFriend(testUser.getId(), friendUser.getId());
+        userController.removeFriend(testUser.getId(), friendUser.getId());
 
-        List<User> friends = controller.getFriends(testUser.getId());
+        List<User> friends = (List) userController.getFriends(testUser.getId());
         assertTrue(friends.isEmpty());
     }
 
     @Test
     @DisplayName("Возвращает список друзей")
     void shouldReturnFriendsList() {
-        controller.addUser(testUser);
-        controller.addUser(friendUser);
-        controller.addFriend(testUser.getId(), friendUser.getId());
+        userController.createUser(testUser);
+        userController.createUser(friendUser);
+        userController.addFriend(testUser.getId(), friendUser.getId());
 
-        List<User> friends = controller.getFriends(testUser.getId());
+        List<User> friends = (List) userController.getFriends(testUser.getId());
         assertEquals(1, friends.size());
         assertEquals(friendUser.getId(), friends.get(0).getId());
     }
@@ -134,17 +128,17 @@ public class UserControllerTest {
     @Test
     @DisplayName("Возвращает общих друзей")
     void shouldReturnCommonFriends() {
-        controller.addUser(testUser);
-        controller.addUser(friendUser);
+        userController.createUser(testUser);
+        userController.createUser(friendUser);
         User commonFriend = new User();
         commonFriend.setEmail("common@mail.ru");
         commonFriend.setLogin("commonLogin");
-        commonFriend = controller.addUser(commonFriend);
+        commonFriend = userController.createUser(commonFriend);
 
-        controller.addFriend(testUser.getId(), commonFriend.getId());
-        controller.addFriend(friendUser.getId(), commonFriend.getId());
+        userController.addFriend(testUser.getId(), commonFriend.getId());
+        userController.addFriend(friendUser.getId(), commonFriend.getId());
 
-        List<User> commonFriends = controller.getCommonFriends(testUser.getId(), friendUser.getId());
+        List<User> commonFriends = (List) userController.getCommonFriends(testUser.getId(), friendUser.getId());
         assertEquals(1, commonFriends.size());
         assertEquals(commonFriend.getId(), commonFriends.getFirst().getId());
     }
@@ -152,16 +146,16 @@ public class UserControllerTest {
     @Test
     @DisplayName("Отклоняет добавление несуществующего друга")
     void shouldThrowWhenAddingNonExistingFriend() {
-        controller.addUser(friendUser);
+        userController.createUser(friendUser);
         assertThrows(NotFoundException.class,
-                () -> controller.addFriend(testUser.getId(), 999L));
+                () -> userController.addFriend(testUser.getId(), 999L));
     }
 
     @Test
     @DisplayName("Отклоняет добавление друга к несуществующему пользователю")
     void shouldThrowWhenAddingFriendToNonExistingUser() {
-        controller.addUser(friendUser);
+        userController.createUser(friendUser);
         assertThrows(NotFoundException.class,
-                () -> controller.addFriend(999L, friendUser.getId()));
+                () -> userController.addFriend(999L, friendUser.getId()));
     }
 }

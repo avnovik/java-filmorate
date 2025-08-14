@@ -1,99 +1,61 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserRepository;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
- * Сервис для обработки операций с друзьями пользователей.
- * Реализует бизнес-логику добавления/удаления друзей и поиска общих друзей.
+ * Сервис для работы с пользователями.
+ * Обрабатывает создание, обновление, поиск пользователей, автоматически назначает логин как имя, если имя пустое.
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
+    private final ValidationService validationService;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public Collection<User> findAllUsers() {
+        log.info("Попытка получения списка всех пользователей.");
+        return userRepository.findAllUsers();
     }
 
-    public User addUser(User user) {
+    public User getUserById(Long userId) {
+        log.info("Попытка получения пользователя по ID: {}", userId);
+        if (userId == null) {
+            throw new ValidationException("ID пользователя не может быть null.");
+        }
+        return userRepository.getUserById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден."));
+    }
+
+    public User createUser(User user) {
+        log.info("Попытка создания нового пользователя: email={}, login={}", user.getEmail(), user.getLogin());
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            log.info("Для пользователя {} установлен login как имя", user.getEmail());
         }
-        return userStorage.addUser(user);
+        User createdUser = userRepository.createUser(user);
+        log.info("Создан пользователь с ID: {}", createdUser.getId());
+        return createdUser;
     }
 
-    public User updateUser(User user) {
-        getUserByIdOrThrow(user.getId());
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("Для пользователя {} установлен login как имя", user.getEmail());
+    public User updateUser(User newUser) {
+        log.info("Попытка обновления пользователя с ID: {}", newUser.getId());
+        if (newUser.getId() == null) {
+            throw new ValidationException("ID пользователя не может быть null.");
         }
-        return userStorage.updateUser(user);
-    }
-
-    public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
-    }
-
-    public User getUserById(Long id) {
-        return userStorage.getUserById(id);
-    }
-
-    public void addFriend(Long userId, Long friendId) {
-        User user = getUserByIdOrThrow(userId);
-        User friend = getUserByIdOrThrow(friendId);
-
-        user.getFriends().add(friendId);
-        log.info("Пользователь {} добавил в друзья {}", userId, friendId);
-        friend.getFriends().add(userId); // Дружба взаимная
-        log.info("Пользователь {} добавил в друзья {}", friendId, userId);
-    }
-
-    public void removeFriend(Long userId, Long friendId) {
-        User user = getUserByIdOrThrow(userId);
-        User friend = getUserByIdOrThrow(friendId);
-
-        user.getFriends().remove(friendId);
-        log.info("Пользователь {} удалил из друзей {}", userId, friendId);
-        friend.getFriends().remove(userId);
-        log.info("Пользователь {} удалил из друзей {}", friendId, userId);
-    }
-
-    public List<User> getFriends(Long userId) {
-        User user = getUserByIdOrThrow(userId);
-        return user.getFriends().stream()
-                .map(userStorage::getUserById)
-                .filter(Objects::nonNull)
-                .toList();
-    }
-
-    public List<User> getCommonFriends(Long userId, Long otherId) {
-        User user = getUserByIdOrThrow(userId);
-        User otherUser = getUserByIdOrThrow(otherId);
-
-        Set<Long> commonIds = new HashSet<>(user.getFriends());
-        commonIds.retainAll(otherUser.getFriends()); // Оставляем только общих
-
-        return commonIds.stream()
-                .map(userStorage::getUserById)  // ID → User
-                .filter(Objects::nonNull)
-                .toList();
-    }
-
-    protected User getUserByIdOrThrow(Long id) {
-        User user = userStorage.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с id=" + id + " не найден");
+        validationService.validateUserExists(newUser.getId());
+        if (newUser.getName() == null || newUser.getName().isBlank()) {
+            newUser.setName(newUser.getLogin());
         }
-        return user;
+        User updatedUser = userRepository.updateUser(newUser);
+        log.info("Пользователь с ID {} обновлен", newUser.getId());
+        return updatedUser;
     }
 }
