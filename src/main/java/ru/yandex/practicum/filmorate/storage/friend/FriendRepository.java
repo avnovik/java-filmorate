@@ -13,6 +13,4 @@ public interface FriendRepository {
     List<User> getFriends(Long userId);
 
     List<User> getCommonFriends(Long userId1, Long userId2);
-
-    boolean hasFriendship(Long userId, Long friendId);
 }

@@ -16,6 +16,4 @@ public interface FilmRepository {
     Film updateFilm(Film newFilm);
 
     Optional<Film> getFilmById(Long id);
-
-    boolean deleteFilm(Long id);
 }
