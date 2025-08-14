@@ -22,14 +22,14 @@ import java.util.*;
 @Qualifier("filmRepository")
 public class JdbcFilmRepository extends BaseNamedParameterRepository<Film> implements FilmRepository {
     private static final String FIND_ALL_FILMS_QUERY = """
-            SELECT f.*, m.mpa_id AS mpa_id, m.name AS mpa_name, m.description AS mpa_description
+            SELECT f.*, m.mpa_id AS mpa_id, m.name AS mpa_name
             FROM films f
             JOIN mpa_ratings m ON f.mpa_id = m.mpa_id
             ORDER BY f.film_id
             """;
 
     private static final String FIND_FILM_BY_ID_QUERY = """
-            SELECT f.*, m.mpa_id AS mpa_id, m.name AS mpa_name, m.description AS mpa_description
+            SELECT f.*, m.mpa_id AS mpa_id, m.name AS mpa_name
             FROM films f
             JOIN mpa_ratings m ON f.mpa_id = m.mpa_id
             WHERE f.film_id = :filmId
@@ -49,13 +49,13 @@ public class JdbcFilmRepository extends BaseNamedParameterRepository<Film> imple
     private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE film_id = :filmId";
 
     private static final String GET_POPULAR_FILM_QUERY = """
-            SELECT f.*, m.mpa_id AS mpa_id, m.name AS mpa_name, m.description AS mpa_description,
+            SELECT f.*, m.mpa_id AS mpa_id, m.name AS mpa_name,
             COUNT(l.user_id) AS like_count
             FROM films f
             JOIN mpa_ratings m ON f.mpa_id = m.mpa_id
             LEFT JOIN likes l ON f.film_id = l.film_id
             GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id,
-                 m.mpa_id, m.name, m.description
+                 m.mpa_id, m.name
             ORDER BY like_count DESC
             LIMIT :count
             """;
@@ -149,12 +149,12 @@ public class JdbcFilmRepository extends BaseNamedParameterRepository<Film> imple
         return newFilm;
     }
 
-    @Override
-    public boolean deleteFilm(Long filmId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("filmId", filmId);
-        return delete(DELETE_FILM_QUERY, params);
-    }
+//    @Override
+//    public boolean deleteFilm(Long filmId) {
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("filmId", filmId);
+//        return delete(DELETE_FILM_QUERY, params);
+//    }
 
     @Override
     public Collection<Film> getPopularFilms(int count) {

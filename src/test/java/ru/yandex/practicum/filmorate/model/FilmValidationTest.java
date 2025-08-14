@@ -19,7 +19,7 @@ public class FilmValidationTest extends BaseTest {
                 .description("Valid description")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "G Film"))
+                .mpa(new MpaRating(1L, "G"))
                 .build();
 
         var violations = validator.validate(film);
@@ -35,7 +35,7 @@ public class FilmValidationTest extends BaseTest {
                 .description("A".repeat(201)) // 201 символ
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "G Film"))
+                .mpa(new MpaRating(1L, "G"))
                 .build();
 
         var violations = validator.validate(film);
@@ -51,7 +51,7 @@ public class FilmValidationTest extends BaseTest {
                 .description("Valid description")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(-1)
-                .mpa(new MpaRating(1L, "G", "G Film"))
+                .mpa(new MpaRating(1L, "G"))
                 .build();
 
         var violations = validator.validate(film);
@@ -67,7 +67,7 @@ public class FilmValidationTest extends BaseTest {
                 .description("Valid description")
                 .releaseDate(null)
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "G Film"))
+                .mpa(new MpaRating(1L, "G"))
                 .build();
 
         var violations = validator.validate(film);

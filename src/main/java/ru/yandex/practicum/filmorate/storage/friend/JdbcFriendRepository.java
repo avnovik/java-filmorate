@@ -109,11 +109,6 @@ public class JdbcFriendRepository implements FriendRepository {
         return jdbc.query(GET_COMMON_FRIENDS_QUERY, params, userRowMapper);
     }
 
-    @Override
-    public boolean hasFriendship(Long userId, Long friendId) {
-        return checkFriendshipStatus(userId, friendId, true);
-    }
-
     private boolean checkFriendshipStatus(Long userId, Long friendId, boolean confirmed) {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);

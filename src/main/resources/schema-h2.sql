@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS mpa_ratings
 (
-    mpa_id      BIGINT PRIMARY KEY,
-    name        VARCHAR(10) NOT NULL,
-    description VARCHAR(255)
+    mpa_id BIGINT PRIMARY KEY,
+    name   VARCHAR(10) NOT NULL
 );
 
 

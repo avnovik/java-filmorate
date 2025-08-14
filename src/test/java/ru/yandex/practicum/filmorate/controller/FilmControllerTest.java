@@ -36,7 +36,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test shouldAddValidFilm")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
 
@@ -52,7 +52,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test shouldAcceptReleaseDateExactly1895")
                 .releaseDate(LocalDate.of(1895, 12, 28))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
         assertDoesNotThrow(() -> filmController.createFilm(film));
@@ -66,7 +66,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test shouldThrowExceptionIfReleaseDateBefore1895")
                 .releaseDate(LocalDate.of(1890, 12, 28))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
 
@@ -86,7 +86,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Valid shouldThrowExceptionIfFilmNotFound")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
 
@@ -114,7 +114,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test shouldAddLikeToFilm")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
         Film createdFilm = filmController.createFilm(film);
@@ -143,7 +143,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test shouldRemoveLikeFromFilm")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
         Film createdFilm = filmController.createFilm(film);
@@ -165,7 +165,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test Description 1")
                 .releaseDate(LocalDate.of(2000, 1, 11))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
         filmController.createFilm(film1);
@@ -175,7 +175,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test Description 2")
                 .releaseDate(LocalDate.of(2000, 11, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
         filmController.createFilm(film2);
@@ -192,7 +192,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                 .description("Test shouldGetFilmById")
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(120)
-                .mpa(new MpaRating(1L, "G", "General Audiences"))
+                .mpa(new MpaRating(1L, "G"))
                 .genres(Set.of(new Genre(1L, "Комедия")))
                 .build();
         Film createdFilm = filmController.createFilm(film);
@@ -212,7 +212,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                     .description("Test shouldGetPopularFilmsWithCountParameter" + i)
                     .releaseDate(LocalDate.of(2000 + i, 1 + i, 1))
                     .duration(120)
-                    .mpa(new MpaRating(1L, "G", "General Audiences"))
+                    .mpa(new MpaRating(1L, "G"))
                     .genres(Set.of(new Genre(1L, "Комедия")))
                     .build();
 
@@ -240,7 +240,7 @@ public class FilmControllerTest extends BaseIntegrationTest {
                     .description("Description " + i)
                     .releaseDate(LocalDate.of(2000 + i, 1 + i, 1))
                     .duration(120)
-                    .mpa(new MpaRating(1L, "G", "General Audiences"))
+                    .mpa(new MpaRating(1L, "G"))
                     .genres(Set.of(new Genre(1L, "Комедия")))
                     .build();
 

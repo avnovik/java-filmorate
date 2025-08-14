@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.BaseIntegrationTest;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -147,7 +148,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     @DisplayName("Отклоняет добавление несуществующего друга")
     void shouldThrowWhenAddingNonExistingFriend() {
         userController.createUser(friendUser);
-        assertThrows(NotFoundException.class,
+        assertThrows(ValidationException.class,
                 () -> userController.addFriend(testUser.getId(), 999L));
     }
 

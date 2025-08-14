@@ -14,5 +14,4 @@ public class MpaRating {
     private Long id;
     @NotBlank(message = "Рейтинг не может быть пустым")
     private String name;
-    private String description;
 }

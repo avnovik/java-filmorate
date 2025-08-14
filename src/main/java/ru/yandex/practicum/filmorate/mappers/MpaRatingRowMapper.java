@@ -18,7 +18,6 @@ public class MpaRatingRowMapper implements RowMapper<MpaRating> {
         return new MpaRating().toBuilder()
                 .id(resultSet.getLong("mpa_id"))
                 .name(resultSet.getString("name"))
-                .description(resultSet.getString("description"))
                 .build();
     }
 }
